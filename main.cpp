@@ -369,9 +369,9 @@ int main()
                     {
                         cout << "Введите размер ключа\n";
                         cin >> keySize;
-                        if(keySize < 2)
+                        if(keySize < 2 || keySize > key.max_size())
                         {
-                            cout << "Неверный размер ключа\n";
+                            cout << "Неверный размер ключа, размер должен быть в диапазоне [2;" << key.max_size() << "]\n";
                             break;
                         }
                         key = vector<int>(keySize);
@@ -416,10 +416,28 @@ int main()
                             break;
                         }
                         ifs.read(reinterpret_cast<char*>(&keySize), sizeof(keySize));
+                        if(keySize < 2 || keySize > key.max_size())
+                        {
+                            cout << "Неверный формат файла с ключом\n";
+                            keySize = 0;
+                            ifs.close();
+                            break;
+                        }
                         key = vector<int>(keySize);
+                        bool wrongFile = false;
                         for(int i = 0; i < keySize; i++)
                         {
                             ifs.read(reinterpret_cast<char*>(&key[i]), sizeof(key[i]));
+                            if(ifs.gcount() != sizeof(key[i]))
+                            {
+                                wrongFile = true;
+                                break;
+                            }
+                        }
+                        if(wrongFile)
+                        {
+                            cout << "Неверный формат файла с ключом\n";
+                            keySize = 0;
                         }
                         ifs.close();
                         break;

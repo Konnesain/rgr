@@ -85,7 +85,7 @@ void transpositionDecrypt(std::ifstream &ifs, std::ofstream &ofs, size_t blockSi
 	{
 		if(ifs.read(block, blockSize).gcount() != blockSize)
 		{
-			throw std::invalid_argument("Проблема с зашифрованным файлом");
+			throw std::invalid_argument("Неверный формат зашифрованного файла");
 		}
 		for (size_t i = 0; i < blockSize; i++)
 		{
@@ -97,12 +97,13 @@ void transpositionDecrypt(std::ifstream &ifs, std::ofstream &ofs, size_t blockSi
 
 std::vector<int> transpositionGenerateKey(size_t keySize, std::mt19937 &rng)
 {
-	if(keySize < 2)
+	std::vector<int> key;
+	if(keySize < 2 || keySize > key.max_size())
 	{
-		throw std::invalid_argument("Неверный размер ключа");
+		throw std::invalid_argument("Неверный размер ключа, размер должен быть в диапазоне [2;" + std::to_string(key.max_size()) + "]");
 	}
-	
-	std::vector<int> key(keySize);
+
+	key.resize(keySize);
     std::iota(key.begin(), key.end(), 1);
     std::shuffle(key.begin(), key.end(), rng);
     return key;

@@ -65,12 +65,13 @@ void viginereDecrypt(std::ifstream &ifs, std::ofstream &ofs, const std::vector<c
 
 std::vector<char> viginereGenerateKey(size_t keySize, std::mt19937 &rng)
 {
-    if(keySize < 1)
+    std::vector<char> key;
+    if(keySize < 1 || keySize > key.max_size())
     {
-        throw std::invalid_argument("Неверный размер ключаа");
+        throw std::invalid_argument("Неверный размер ключа, размер должен быть в диапазоне [1;" + std::to_string(key.max_size()) + "]");
     }
     
-    std::vector<char> key(keySize);
+    key.resize(keySize);
     std::uniform_int_distribution<uint8_t> dist(0, 255);
     for(int i = 0; i < keySize; i++)
     {
