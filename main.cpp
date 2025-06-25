@@ -178,7 +178,7 @@ int main()
                         string keyFile;
                         cin >> keyFile;
                         ifstream ifs(keyFile, ios::binary);
-                        if(ifs.is_open())
+                        if(!ifs.is_open())
                         {
                             cout << "Не удалось открыть файл\n";
                             break;
