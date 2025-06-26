@@ -1,7 +1,7 @@
-all: rgr rgrtransposition.so rgraes.so rgrviginere.so
+all: RGREncryption rgrtransposition.so rgraes.so rgrviginere.so
 
-rgr: main.cpp
-	g++ main.cpp -o rgr
+RGREncryption: main.cpp
+	g++ main.cpp -o RGREncryption
 
 rgrtransposition.so: transposition.cpp transposition.h
 	g++ -shared -fPIC transposition.cpp -o rgrtransposition.so
@@ -14,13 +14,13 @@ rgraes.so: aes.cpp aes.h
 
 install: all
 	cp -f rgraes.so rgrviginere.so rgrtransposition.so /usr/lib/
-	cp -f rgr /usr/bin/
+	cp -f RGREncryption /usr/bin/
 
 archive: all
-	tar -czf rgr.tar.gz rgr rgrtransposition.so rgrviginere.so rgraes.so
+	tar -czf rgr.tar.gz RGREncryption rgrtransposition.so rgrviginere.so rgraes.so
 
 clean:
-	rm -f rgraes.so rgrviginere.so rgrtransposition.so rgr rgr.tar.gz
+	rm -f rgraes.so rgrviginere.so rgrtransposition.so RGREncryption rgr.tar.gz
 
 uninstall:
-	rm -f /usr/lib/rgraes.so /usr/lib/rgrtransposition.so /usr/lib/rgrviginere.so /usr/bin/rgr
+	rm -f /usr/lib/rgraes.so /usr/lib/rgrtransposition.so /usr/lib/rgrviginere.so /usr/bin/RGREncryption

@@ -7,7 +7,7 @@ curl -sSf https://raw.githubusercontent.com/Konnesain/rgr/refs/heads/main/instal
 # Запуск
 Для запуска программы введите следующую команду в терминал:
 ```console
-rgr
+RGREncryption
 ```
 
 # Удаление

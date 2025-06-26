@@ -10,14 +10,14 @@
 
 using namespace std;
 
-enum class CipherType
+enum class Cipher
 {
     AES = 1,
     TRANSPOSITION,
     VIGINERE
 };
 
-enum class AESOption
+enum class CipherOption
 {
     INPUTKEY = 1,
     FILEKEY,
@@ -26,6 +26,8 @@ enum class AESOption
     ENCRYPTFILE,
     DECRYPT
 };
+
+//aes
 typedef void (*aesReadBlock)(ifstream&, vector<vector<uint8_t>>&);
 typedef void (*aesWriteBlock)(ofstream&, const vector<vector<uint8_t>>&);
 typedef void (*aesEncryptCBCText)(const string&, ofstream&, const vector<vector<uint8_t>>&, const vector<vector<uint8_t>>&);
@@ -34,29 +36,13 @@ typedef void (*aesDecryptCBC)(ifstream&, ofstream&, const vector<vector<uint8_t>
 typedef vector<vector<uint8_t>> (*aesGenerateBlock)(mt19937&);
 typedef void (*aesTextToBlock)(const string&, vector<vector<uint8_t>>&, size_t);
 
-enum class TranspositionOption
-{
-    INPUTKEY = 1,
-    FILEKEY,
-    RANDOMKEY,
-    ENCRYPTTEXT,
-    ENCRYPTFILE,
-    DECRYPT
-};
+//transposition
 typedef void (*transpositionEncryptText)(const string&, ofstream&, size_t, const vector<int>&);
 typedef void (*transpositionEncryptFile)(ifstream&, ofstream&, size_t, const vector<int>&);
 typedef void (*transpositionDecrypt)(ifstream&, ofstream&, size_t, const vector<int>&);
 typedef vector<int>(*transpositionGenerateKey)(size_t, mt19937&);
 
-enum class ViginereOption
-{
-    INPUTKEY = 1,
-    FILEKEY,
-    RANDOMKEY,
-    ENCRYPTTEXT,
-    ENCRYPTFILE,
-    DECRYPT
-};
+//viginere
 typedef void (*viginereEncryptText)(const string&, ofstream&, const vector<char>&);
 typedef void (*viginereEncryptFile)(ifstream&, ofstream&, const vector<char>&);
 typedef void (*viginereDecrypt)(ifstream&, ofstream&, const vector<char>&);
@@ -85,11 +71,11 @@ int main()
         cout << "Иначе - Выход\n";
         int cipherCode;
         cin >> cipherCode;
-        CipherType cipher = static_cast<CipherType>(cipherCode);
+        Cipher cipher = static_cast<Cipher>(cipherCode);
 
         switch (cipher)
         {
-        case CipherType::AES:
+        case Cipher::AES:
         {
             void* libraryHandle;
             if(!openLibrary(libraryHandle, "rgraes.so"))
@@ -138,10 +124,10 @@ int main()
 
                 int optionCode;
                 cin >> optionCode;
-                AESOption option = static_cast<AESOption>(optionCode);
+                CipherOption option = static_cast<CipherOption>(optionCode);
                 switch(option)
                 {
-                    case AESOption::INPUTKEY:
+                    case CipherOption::INPUTKEY:
                     {
                         cout << "Введите ключ(будет обрезан до 128 бит)\n";
                         string keyStr;
@@ -170,9 +156,10 @@ int main()
                             ofs.close();
                         }
                         hasKey = true;
+                        cout << "Ключи заданы\n";
                         break;
                     }
-                    case AESOption::FILEKEY:
+                    case CipherOption::FILEKEY:
                     {
                         cout << "Введите файл с ключами\n";
                         string keyFile;
@@ -187,9 +174,10 @@ int main()
                         readBlockFunc(ifs, iv);
                         ifs.close();
                         hasKey = true;
+                        cout << "Ключи заданы\n";
                         break;
                     }
-                    case AESOption::RANDOMKEY:
+                    case CipherOption::RANDOMKEY:
                     {
                         cout << "Введите файл для ключей\n";
                         string keyFile;
@@ -202,13 +190,14 @@ int main()
                         writeblockFunc(ofs, iv);
                         ofs.close();
                         hasKey = true;
+                        cout << "Ключи заданы\n";
                         break;
                     }
-                    case AESOption::ENCRYPTTEXT:
+                    case CipherOption::ENCRYPTTEXT:
                     {
                         if(!hasKey)
                         {
-                            cout << "Ключ не задан\n";
+                            cout << "Ключ шифрования не задан, задайте ключ одной из опций 1-3\n";
                             break;
                         }
 
@@ -234,11 +223,11 @@ int main()
                         cout << "Зашифровано\n";
                         break;
                     }
-                    case AESOption::ENCRYPTFILE:
+                    case CipherOption::ENCRYPTFILE:
                     {
                         if(!hasKey)
                         {
-                            cout << "Ключ не задан\n";
+                            cout << "Ключ шифрования не задан, задайте ключ одной из опций 1-3\n";
                             break;
                         }
 
@@ -270,11 +259,11 @@ int main()
                         cout << "Зашифровано\n";
                         break;
                     }
-                    case AESOption::DECRYPT:
+                    case CipherOption::DECRYPT:
                     {
                         if(!hasKey)
                         {
-                            cout << "Ключ не задан\n";
+                            cout << "Ключ шифрования не задан, задайте ключ одной из опций 1-3\n";
                             break;
                         }
 
@@ -319,7 +308,7 @@ int main()
             }
             break;
         }
-        case CipherType::TRANSPOSITION:
+        case Cipher::TRANSPOSITION:
         {
             void* libraryHandle;
             if(!openLibrary(libraryHandle, "rgrtransposition.so"))
@@ -361,11 +350,11 @@ int main()
 
                 int optionCode;
                 cin >> optionCode;
-                TranspositionOption option = static_cast<TranspositionOption>(optionCode);
+                CipherOption option = static_cast<CipherOption>(optionCode);
 
                 switch(option)
                 {
-                    case TranspositionOption::INPUTKEY:
+                    case CipherOption::INPUTKEY:
                     {
                         cout << "Введите размер ключа\n";
                         cin >> keySize;
@@ -402,9 +391,10 @@ int main()
                             }
                             ofs.close();
                         }
+                        cout << "Ключ задан\n";
                         break;
                     }
-                    case TranspositionOption::FILEKEY:
+                    case CipherOption::FILEKEY:
                     {
                         cout << "Введите файл с ключом\n";
                         string keyFile;
@@ -440,9 +430,10 @@ int main()
                             keySize = 0;
                         }
                         ifs.close();
+                        cout << "Ключ задан\n";
                         break;
                     }
-                    case TranspositionOption::RANDOMKEY:
+                    case CipherOption::RANDOMKEY:
                     {
                         cout << "Введите файл для ключа\n";
                         string keyFile;
@@ -478,11 +469,11 @@ int main()
                         ofs.close();
                         break;
                     }
-                    case TranspositionOption::ENCRYPTTEXT:
+                    case CipherOption::ENCRYPTTEXT:
                     {
                         if(key.size() == 0)
                         {
-                            cout << "Ключ не задан\n";
+                            cout << "Ключ шифрования не задан, задайте ключ одной из опций 1-3\n";
                             break;
                         }
                         cout << "Введите текст для шифрования\n";
@@ -507,11 +498,11 @@ int main()
                         cout << "Зашифровано\n";
                         break;
                     }
-                    case TranspositionOption::ENCRYPTFILE:
+                    case CipherOption::ENCRYPTFILE:
                     {
                         if(key.size() == 0)
                         {
-                            cout << "Ключ не задан\n";
+                            cout << "Ключ шифрования не задан, задайте ключ одной из опций 1-3\n";
                             break;
                         }
                         cout << "Введите файл для шифрования\n";
@@ -542,11 +533,11 @@ int main()
                         cout << "Зашифровано\n";
                         break;
                     }
-                    case TranspositionOption::DECRYPT:
+                    case CipherOption::DECRYPT:
                     {
                         if(key.size() == 0)
                         {
-                            cout << "Ключ не задан\n";
+                            cout << "Ключ шифрования не задан, задайте ключ одной из опций 1-3\n";
                             break;
                         }
                         cout << "Введите файл для дешифрования\n";
@@ -590,7 +581,7 @@ int main()
             }
             break;
         }
-        case CipherType::VIGINERE:
+        case Cipher::VIGINERE:
         {
             void* libraryHandle;
             if(!openLibrary(libraryHandle, "rgrviginere.so"))
@@ -630,10 +621,10 @@ int main()
                 cout << "Иначе - Назад\n";
                 int optionCode;
                 cin >> optionCode;
-                ViginereOption option = static_cast<ViginereOption>(optionCode);
+                CipherOption option = static_cast<CipherOption>(optionCode);
                 switch(option)
                 {
-                    case ViginereOption::INPUTKEY:
+                    case CipherOption::INPUTKEY:
                     {
                         cout << "Введите ключ\n";
                         string tkey;
@@ -659,9 +650,10 @@ int main()
                             }
                             ofs.close();
                         }
+                        cout << "Ключ задан\n";
                         break;
                     }
-                    case ViginereOption::FILEKEY:
+                    case CipherOption::FILEKEY:
                     {
                         cout << "Введите файл с ключом\n";
                         string keyFile;
@@ -674,9 +666,10 @@ int main()
                         }
                         key = vector<char>((istreambuf_iterator<char>(ifs)), istreambuf_iterator<char>());
                         ifs.close();
+                        cout << "Ключ задан\n";
                         break;
                     }
-                    case ViginereOption::RANDOMKEY:
+                    case CipherOption::RANDOMKEY:
                     {
                         cout << "Введите файл для ключа\n";
                         string keyFile;
@@ -706,13 +699,14 @@ int main()
                             ofs.write(&k, 1);
                         }
                         ofs.close();
+                        cout << "Ключ задан\n";
                         break;
                     }
-                    case ViginereOption::ENCRYPTTEXT:
+                    case CipherOption::ENCRYPTTEXT:
                     {
                         if(key.size() == 0)
                         {
-                            cout << "Ключ не задан\n";
+                            cout << "Ключ шифрования не задан, задайте ключ одной из опций 1-3\n";
                             break;
                         }
 
@@ -738,11 +732,11 @@ int main()
                         cout << "Зашифровано\n";
                         break;
                     }
-                    case ViginereOption::ENCRYPTFILE:
+                    case CipherOption::ENCRYPTFILE:
                     {
                         if(key.size() == 0)
                         {
-                            cout << "Ключ не задан\n";
+                            cout << "Ключ шифрования не задан, задайте ключ одной из опций 1-3\n";
                             break;
                         }
                         cout << "Введите файл для шифрования\n";
@@ -773,11 +767,11 @@ int main()
                         cout << "Зашифровано\n";
                         break;
                     }
-                    case ViginereOption::DECRYPT:
+                    case CipherOption::DECRYPT:
                     {
                         if(key.size() == 0)
                         {
-                            cout << "Ключ не задан\n";
+                            cout << "Ключ шифрования не задан, задайте ключ одной из опций 1-3\n";
                             break;
                         }
                         cout << "Введите файл для дешифрования\n";
@@ -806,7 +800,6 @@ int main()
                         ifs.close();
                         ofs.close();
                         cout << "Расшифровано\n";
-                        break;
                         break;
                     }
                     default:

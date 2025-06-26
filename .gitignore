@@ -1,6 +1,6 @@
 *.so
 *.o
 rgr.tar.gz
-rgr
+RGREncryption
 test/
 .vscode/
